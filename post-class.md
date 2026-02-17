@@ -172,10 +172,6 @@ Practicing these patterns now will make later topics (like Pandas and modeling) 
 
 ## Solution
 
-# **Solutions: Mastering the Engine (NumPy Practice)**
-
-This document provides the solutions and explanations for the NumPy post-class practice exercises, ranging from basic array creation to simple scoring models.
-
 ## **1: Warm-up: Rebuild the Basics**
 
 ### **1\. Array Creation & Inspection**
