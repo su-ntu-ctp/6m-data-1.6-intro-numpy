@@ -31,14 +31,14 @@ You can work through these in the same environment you used in class (Colab or V
 import numpy as np
 
 sales = np.array([
-    ,  # Region A
-    ,  # Region B
-    ,  # Region C
-       # Region D
+    [120, 135, 110, 145, 130],  # Region A
+    [ 90,  85,  95, 100, 110],  # Region B
+    [200, 215, 190, 225, 245],  # Region C
+    [155, 140, 135, 160, 170]   # Region D
 ])
 regions = np.array(["A", "B", "C", "D"])
 quarters = np.array(["Q1", "Q2", "Q3", "Q4", "Q5"])
-````
+```
 
 Do the following:
 
@@ -165,10 +165,19 @@ If you’re comfortable with the above, try:
 
 If you get stuck:
 
-- Add a markdown cell describing what you tried and what you expected vs what happened.  
-- Bring your notebook to the next session or share it in Discord for feedback.
+- Add a markdown cell describing what you tried and what you expected vs what happened.
+- Post your notebook in **#questions** on Discord for help, or in **#peer-reviews** to share your work.
 
-Practicing these patterns now will make later topics (like Pandas and modeling) feel much more natural.
+Practising these patterns now will make later topics (like Pandas and modelling) feel much more natural.
+
+---
+
+## ✅ Solutions
+
+*Attempt all exercises before expanding the solutions below.*
+
+<details>
+<summary>Click to reveal all solutions</summary>
 
 ## Solution
 
@@ -347,4 +356,4 @@ print(f"Group A Conv Rate: {group_a.mean():.2%}")
 print(f"Group B Conv Rate: {group_b.mean():.2%}")
 ```
 
-
+</details>

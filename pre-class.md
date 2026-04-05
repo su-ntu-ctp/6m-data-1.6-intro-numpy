@@ -1,9 +1,25 @@
-# Pre-work for “NumPy for Data Analysts” (3-hour Lab)
+# 📚 Pre-Class: NumPy for Data Analysts
 
-To make the most of our session, please complete this short pre-work before class.  
-It should take about 30–45 minutes.
+**Estimated Time:** 30–45 minutes
+**Prerequisites:** Lesson 1.5 — Advanced SQL
+
+> In Lessons 1.3–1.5 you worked with data stored in databases, querying it with SQL. From this lesson onward, you'll work with data directly in Python. NumPy is the foundation — it's the numerical computing library that Pandas (Lesson 1.7) and every machine learning library is built on top of.
+
+---
+
+## What is NumPy?
+
+NumPy (Numerical Python) gives Python the ability to work with large arrays of numbers extremely fast. Where plain Python stores data in lists (one item at a time), NumPy stores it in **arrays** — grids of numbers optimised for mathematical operations.
+
+Think of it this way: if a Python list is a column of cells in Excel, a NumPy array is the entire spreadsheet — and NumPy can do maths on every cell simultaneously, without loops.
+
+You'll use NumPy throughout the rest of this course as the underlying engine for data manipulation and modelling.
+
+---
 
 **Watch [NumPy Intro Video](https://www.youtube.com/watch?v=SuI27ERy0-A)**
+
+---
 
 ## 1\. What is a Jupyter Notebook?
 
@@ -18,15 +34,13 @@ A Jupyter notebook is an interactive document that can contain:
 You run each code cell independently and see the result immediately below it.  
 We’ll use notebooks to experiment with NumPy and to complete hands-on exercises.
 
-If you have never seen a notebook before:
-
-- Watch a short introduction video (any 5–10 min overview is fine), or  
-- Read a brief introduction from the Jupyter or Colab docs.
+If you have never seen a notebook before, watch this short intro first:
+▶️ [Jupyter Notebook Tutorial for Beginners](https://www.youtube.com/watch?v=HW29067qVWk) (~8 min)
 
 You do **not** need to understand everything yet; just get familiar with:
 
-- What a “cell” is  
-- How to run a cell  
+- What a “cell” is
+- How to run a cell
 - How to see output
 
 ---
@@ -42,16 +56,13 @@ If you plan to use **Google Colab** in the browser:
 
 ### 2.2. Install the “Open in Colab” Chrome extension
 
-This extension lets you open GitHub-hosted notebooks in Colab with one click. [chromewebstore.google](https://chromewebstore.google.com/detail/open-in-colab/iogfkhleblhcpcekbiedikdehleodpjo?hl=en-US&utm_source=ext_sidebar)
+This extension lets you open GitHub-hosted notebooks in Colab with one click.
 
-1. Open the Chrome Web Store page for **Open in Colab**. [chromewebstore.google](https://chromewebstore.google.com/detail/open-in-colab/iogfkhleblhcpcekbiedikdehleodpjo?hl=en-US&utm_source=ext_sidebar)  
-2. Click **Add to Chrome** and confirm.  
+1. Open the [Open in Colab Chrome extension page](https://chromewebstore.google.com/detail/open-in-colab/iogfkhleblhcpcekbiedikdehleodpjo?hl=en-US&utm_source=ext_sidebar)
+2. Click **Add to Chrome** and confirm.
 3. After installation, you should see the extension icon in your Chrome toolbar.
 
-What it does:
-
-- On GitHub, you’ll see an “Open in Colab” button for notebooks.  
-- Clicking it will open the notebook directly in Colab so you can run the code. [chromewebstore.google](https://chromewebstore.google.com/detail/open-in-colab/iogfkhleblhcpcekbiedikdehleodpjo?hl=en-US&utm_source=ext_sidebar)
+What it does: on any GitHub notebook page, a button appears that opens the notebook directly in Colab so you can run the code immediately.
 
 ### 2.3. Test Colab
 
@@ -165,4 +176,4 @@ We will build everything step by step in class, using guided exercises.
 
 ---
 
-If you get stuck during pre-work (extension installation, Colab, or VS Code setup), please take a screenshot of the error and bring it to class or share it in Discord ahead of time.  
+If you get stuck during setup, take a screenshot of the error and post it in **#questions** on Discord.
