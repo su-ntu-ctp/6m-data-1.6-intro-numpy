@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NumPy Arrays Visualized</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --panel: #171a2e;
+    --panel-2: #1f2340;
+    --ink: #e7e9f7;
+    --ink-dim: #9aa0c3;
+    --rule: #2a2f55;
+    --accent: #ffd166;
+    --accent-2: #ef476f;
+    --accent-3: #06d6a0;
+    --accent-4: #118ab2;
+    --muted: #3b4170;
+    --code-bg: #0b0e1c;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    --font-mono: "SF Mono", "JetBrains Mono", "Menlo", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: var(--font-sans); }
+  body { min-height: 100vh; padding: 32px 20px 80px; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 28px; }
+  header h1 { font-size: clamp(28px, 5vw, 44px); margin: 0; letter-spacing: -0.02em; font-weight: 700; }
+  header h1 em { color: var(--accent); font-style: italic; }
+  header .subtitle { color: var(--ink-dim); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; }
+
+  nav.tabs { display: flex; justify-content: center; gap: 8px; margin: 24px 0 32px; flex-wrap: wrap; }
+  nav.tabs button { background: var(--panel); color: var(--ink-dim); border: 1px solid var(--rule); padding: 10px 18px; border-radius: 999px; font: 500 13px var(--font-sans); cursor: pointer; transition: all 0.15s; }
+  nav.tabs button:hover { color: var(--ink); border-color: var(--muted); }
+  nav.tabs button.active { background: var(--accent); color: #1a1404; border-color: var(--accent); font-weight: 700; }
+
+  section.part { display: none; }
+  section.part.active { display: block; animation: fade 0.3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .part-label { color: var(--ink-dim); letter-spacing: 0.12em; text-transform: uppercase; font-size: 11px; margin-bottom: 8px; }
+  h2.headline { font-size: clamp(22px, 3.5vw, 34px); margin: 0 0 10px; font-weight: 600; letter-spacing: -0.01em; }
+  h2.headline em { color: var(--accent); font-style: italic; }
+  p.intro { color: var(--ink-dim); font-size: 15px; line-height: 1.65; max-width: 780px; margin: 0 0 24px; }
+  p.intro code { color: var(--ink); background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font: 13px var(--font-mono); }
+
+  .presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .presets button { background: var(--panel-2); color: var(--ink); border: 1px solid var(--rule); padding: 7px 13px; border-radius: 8px; font: 500 12px var(--font-mono); cursor: pointer; transition: all 0.15s; }
+  .presets button:hover { background: var(--muted); border-color: var(--accent); }
+
+  .grid-layout { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  @media (min-width: 860px) { .grid-layout.two { grid-template-columns: 1fr 1fr; } .grid-layout.wide-narrow { grid-template-columns: 1.6fr 1fr; } }
+
+  .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 20px; }
+  .panel h3 { margin: 0 0 14px; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); font-weight: 600; }
+
+  .input-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .input-row label { font: 500 13px var(--font-mono); color: var(--ink-dim); }
+  .input-row input[type="number"], .input-row input[type="text"] { background: var(--code-bg); color: var(--accent); border: 1px solid var(--rule); padding: 7px 10px; border-radius: 8px; font: 500 14px var(--font-mono); width: 68px; text-align: center; }
+  .input-row input:focus { outline: none; border-color: var(--accent); }
+  .input-row input[type="text"] { width: 140px; }
+
+  .code-line { background: var(--code-bg); border-radius: 8px; padding: 12px 16px; font: 500 15px var(--font-mono); margin-bottom: 16px; border-left: 3px solid var(--accent); overflow-x: auto; white-space: nowrap; }
+  .code-line .kw { color: #c792ea; }
+  .code-line .num { color: var(--accent); }
+  .code-line .fn { color: var(--accent-3); }
+  .code-line .op { color: var(--accent-2); }
+
+  .array-1d { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+  .cell { min-width: 52px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--panel-2); border: 1px solid var(--rule); border-radius: 8px; font: 600 14px var(--font-mono); transition: all 0.2s; position: relative; cursor: default; }
+  .cell .idx { position: absolute; top: -20px; font: 500 11px var(--font-mono); color: var(--ink-dim); }
+  .cell .lbl { font-size: 10px; color: var(--ink-dim); margin-top: 2px; }
+  .cell.selected { background: var(--accent); color: #1a1404; border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(255,209,102,0.3); }
+  .cell.selected .lbl { color: #1a1404; opacity: 0.7; }
+  .cell.cond-true { background: var(--accent-2); color: #fff; border-color: var(--accent-2); }
+  .cell.view-linked { background: var(--accent-4); color: #fff; border-color: var(--accent-4); }
+  .cell.copy-safe { background: var(--accent-3); color: #062e1c; border-color: var(--accent-3); }
+  .cell.changed { background: #ff6b6b; color: #fff; border-color: #ff6b6b; animation: pulse 0.4s ease; }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+  .cells-with-indices { padding-top: 22px; }
+
+  .matrix-wrap { overflow-x: auto; }
+  .matrix { border-collapse: separate; border-spacing: 4px; }
+  .matrix .row-label, .matrix .col-label { font: 500 11px var(--font-mono); color: var(--ink-dim); padding: 4px 6px; white-space: nowrap; }
+  .matrix .col-label { text-align: center; }
+  .matrix .row-label { text-align: right; vertical-align: middle; }
+
+  .result-label { color: var(--ink-dim); font-size: 12px; margin: 12px 0 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .result { background: var(--code-bg); border-radius: 8px; padding: 12px 16px; font: 500 14px var(--font-mono); color: var(--accent); min-height: 20px; word-break: break-all; }
+  .result .dim { color: var(--ink-dim); font-size: 12px; margin-left: 8px; }
+
+  .scenario { background: linear-gradient(135deg, rgba(6,214,160,0.07), rgba(17,138,178,0.07)); border: 1px solid rgba(6,214,160,0.2); border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size: 14px; line-height: 1.6; }
+  .scenario strong { color: var(--accent-3); }
+
+  .jargon-box { background: var(--panel-2); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+  .jargon-box .jargon-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 10px; }
+  .jargon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .jargon-item { background: var(--code-bg); border-radius: 8px; padding: 10px 12px; }
+  .jargon-item .term { font: 700 13px var(--font-mono); color: var(--accent); margin-bottom: 4px; }
+  .jargon-item .def { font-size: 13px; color: var(--ink-dim); line-height: 1.5; }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: 12px; color: var(--ink-dim); }
+  .legend .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin-right: 5px; }
+
+  .axis-diagram { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+  .axis-box { background: var(--code-bg); border-radius: 10px; padding: 14px; flex: 1; }
+  .axis-box .axis-label { font: 700 13px var(--font-mono); margin-bottom: 8px; }
+  .axis-box .axis-desc { font-size: 13px; color: var(--ink-dim); line-height: 1.5; }
+  .axis-a0 .axis-label { color: var(--accent-2); }
+  .axis-a1 .axis-label { color: var(--accent-4); }
+
+  .shape-badge { display: inline-flex; gap: 4px; align-items: center; background: var(--code-bg); border-radius: 8px; padding: 8px 14px; font: 700 15px var(--font-mono); margin-bottom: 14px; }
+  .shape-badge .sb-val { color: var(--accent); }
+  .shape-badge .sb-dim { color: var(--ink-dim); font-size: 11px; font-weight: 400; margin-top: 2px; text-align: center; }
+
+  .vc-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+  .vc-toggle button { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid var(--rule); background: var(--panel-2); color: var(--ink-dim); font: 600 13px var(--font-sans); cursor: pointer; transition: all 0.2s; }
+  .vc-toggle button.active-view { border-color: var(--accent-4); background: rgba(17,138,178,0.15); color: var(--accent-4); }
+  .vc-toggle button.active-copy { border-color: var(--accent-3); background: rgba(6,214,160,0.12); color: var(--accent-3); }
+
+  .side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .mini-panel { background: var(--code-bg); border-radius: 10px; padding: 14px; }
+  .mini-panel h4 { margin: 0 0 12px; font: 600 12px var(--font-mono); letter-spacing: 0.05em; }
+
+  .apply-btn { background: var(--accent); color: #1a1404; border: none; padding: 9px 18px; border-radius: 8px; font: 700 13px var(--font-sans); cursor: pointer; transition: all 0.15s; }
+  .apply-btn:hover { opacity: 0.85; }
+  .reset-btn { background: var(--panel-2); color: var(--ink); border: 1px solid var(--rule); padding: 9px 18px; border-radius: 8px; font: 600 13px var(--font-sans); cursor: pointer; }
+  .reset-btn:hover { border-color: var(--muted); }
+
+  .explain-box { background: var(--code-bg); border-radius: 8px; padding: 12px 16px; font-size: 14px; color: var(--ink-dim); line-height: 1.6; margin-top: 12px; min-height: 44px; border-left: 3px solid var(--accent-4); }
+  .explain-box.copy-mode { border-left-color: var(--accent-3); }
+
+  footer { margin-top: 60px; text-align: center; color: var(--ink-dim); font-size: 11px; letter-spacing: 0.08em; }
+  footer .dot { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .cell { min-width: 40px; height: 48px; font-size: 12px; }
+    .side-by-side { grid-template-columns: 1fr; }
+    .axis-diagram { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>NumPy Arrays <em>Visualized</em></h1>
+    <div class="subtitle">DSAI Module 1 · Lesson 1.6 · Visual Companion</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="p1">Part 1 — Shape & ndarray</button>
+    <button class="tab-btn" data-tab="p2">Part 2 — Indexing & Slicing</button>
+    <button class="tab-btn" data-tab="p3">Part 3 — Boolean Masking</button>
+    <button class="tab-btn" data-tab="p4">Part 4 — Views vs Copies</button>
+  </nav>
+
+  <!-- ===================== PART 1: SHAPE & NDARRAY ===================== -->
+  <section class="part active" id="p1">
+    <div class="part-label">Part 1 — The ndarray</div>
+    <h2 class="headline">Every array has a <em>shape</em>.</h2>
+    <p class="intro">
+      A NumPy <code>ndarray</code> is a grid of numbers where every cell holds the same type of value.
+      The <strong>shape</strong> tells you how that grid is organised — how many rows, how many columns.
+      Read <code>shape (4, 5)</code> as: "4 rows, 5 columns."
+    </p>
+
+    <div class="jargon-box">
+      <div class="jargon-title">🔤 Key Terms — Plain English</div>
+      <div class="jargon-grid">
+        <div class="jargon-item"><div class="term">ndarray</div><div class="def">N-dimensional array. "N" just means it can have 1, 2, 3 or more dimensions. For data science, 2D (a table) is most common.</div></div>
+        <div class="jargon-item"><div class="term">shape</div><div class="def">A tuple describing the grid size. <code>(4, 5)</code> = 4 rows, 5 columns. Always read as (rows, columns).</div></div>
+        <div class="jargon-item"><div class="term">dtype</div><div class="def">Data type — what kind of number is stored. <code>int64</code> = whole numbers. <code>float64</code> = decimals. All cells must be the same type.</div></div>
+        <div class="jargon-item"><div class="term">ndim</div><div class="def">Number of dimensions. A flat list = 1. A table = 2. A stack of tables = 3. Most arrays you'll use are 2D.</div></div>
+        <div class="jargon-item"><div class="term">axis 0</div><div class="def">The direction going <em>down</em> the rows. <code>sum(axis=0)</code> = add up each column from top to bottom.</div></div>
+        <div class="jargon-item"><div class="term">axis 1</div><div class="def">The direction going <em>across</em> the columns. <code>sum(axis=1)</code> = add up each row left to right.</div></div>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <strong>Scenario:</strong> You're a retail analyst. You have sales data (in $000s) for <strong>4 product categories</strong> (rows) across <strong>5 regions</strong> (columns). Adjust the grid below to see how shape changes.
+    </div>
+
+    <div class="grid-layout two">
+      <div class="panel">
+        <h3>Controls</h3>
+        <div class="input-row">
+          <label>rows =</label>
+          <input type="number" id="p1-rows" value="4" min="1" max="4" />
+          <label style="margin-left:6px">cols =</label>
+          <input type="number" id="p1-cols" value="5" min="1" max="5" />
+        </div>
+        <div class="code-line" id="p1-code">arr = <span class="fn">np.array</span>([...])  <span style="color:var(--ink-dim)">← shape ?</span></div>
+        <div class="result-label">Array Grid</div>
+        <div class="matrix-wrap"><table class="matrix" id="p1-table"></table></div>
+        <div class="result-label">Attributes</div>
+        <div class="result" id="p1-result">—</div>
+        <div class="legend">
+          <span><span class="swatch" style="background:var(--accent)"></span>Active cells</span>
+          <span><span class="swatch" style="background:var(--panel-2);border:1px solid var(--rule)"></span>Outside selection</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Axis Direction Guide</h3>
+        <p style="font-size:13px;color:var(--ink-dim);margin:0 0 14px">When you call <code>mean()</code>, <code>sum()</code>, or <code>std()</code>, NumPy needs to know which direction to collapse. This is the <code>axis</code> argument.</p>
+        <div class="axis-diagram" style="flex-direction:column;">
+          <div class="axis-box axis-a0">
+            <div class="axis-label">axis=0 ↓ (down the rows)</div>
+            <div class="axis-desc">Collapses rows — gives one result per <em>column</em>.<br><code>arr.mean(axis=0)</code> → average of each region across all categories.</div>
+          </div>
+          <div class="axis-box axis-a1">
+            <div class="axis-label">axis=1 → (across the columns)</div>
+            <div class="axis-desc">Collapses columns — gives one result per <em>row</em>.<br><code>arr.mean(axis=1)</code> → average sales per category across all regions.</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;background:var(--code-bg);border-radius:8px;padding:12px;font-size:13px;color:var(--ink-dim);">
+          <strong style="color:var(--ink);">Memory tip:</strong> axis=0 goes in the direction of the <em>first</em> number in shape (rows). axis=1 goes in the direction of the <em>second</em> number (columns).
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART 2: INDEXING & SLICING ===================== -->
+  <section class="part" id="p2">
+    <div class="part-label">Part 2 — Indexing & Slicing</div>
+    <h2 class="headline">Pick exactly <em>what you need</em>.</h2>
+    <p class="intro">
+      NumPy uses <code>arr[rows, cols]</code> to select data.
+      Slicing uses the <code>start:stop</code> syntax — just like Python lists but in two dimensions simultaneously.
+      Remember: the <strong>stop index is excluded</strong> — <code>0:3</code> gives rows 0, 1, 2 (not 3).
+    </p>
+
+    <div class="scenario">
+      <strong>Scenario:</strong> Same 4-category × 5-region sales grid. Use the controls to extract the exact sub-table you need. Try selecting just the top-performing regions for two categories.
+    </div>
+
+    <div class="presets">
+      <button data-pr1="0" data-pr2="4" data-pc1="0" data-pc2="5">All data</button>
+      <button data-pr1="0" data-pr2="1" data-pc1="0" data-pc2="5">Row 0 only</button>
+      <button data-pr1="0" data-pr2="4" data-pc1="2" data-pc2="3">Col 2 only</button>
+      <button data-pr1="1" data-pr2="3" data-pc1="1" data-pc2="4">Middle block</button>
+      <button data-pr1="0" data-pr2="2" data-pc1="3" data-pc2="5">Top-right</button>
+    </div>
+
+    <div class="grid-layout wide-narrow">
+      <div class="panel">
+        <h3>Controls</h3>
+        <div class="input-row">
+          <label>rows</label>
+          <input type="number" id="p2-r1" value="0" min="0" max="4" />
+          <span style="color:var(--ink-dim)">:</span>
+          <input type="number" id="p2-r2" value="4" min="0" max="4" />
+          <label style="margin-left:10px">cols</label>
+          <input type="number" id="p2-c1" value="0" min="0" max="5" />
+          <span style="color:var(--ink-dim)">:</span>
+          <input type="number" id="p2-c2" value="5" min="0" max="5" />
+        </div>
+        <div class="code-line" id="p2-code">arr[…]</div>
+        <div class="result-label">Grid — yellow = selected</div>
+        <div class="matrix-wrap"><table class="matrix" id="p2-table"></table></div>
+        <div class="result-label">Result (values selected)</div>
+        <div class="result" id="p2-result">—</div>
+      </div>
+
+      <div class="panel">
+        <h3>How to read arr[row, col]</h3>
+        <div style="font-size:13px;line-height:1.75;color:var(--ink-dim);">
+          <p><code style="color:var(--ink)">arr[2, 3]</code><br>→ Row 2, Column 3. One single value.</p>
+          <p><code style="color:var(--ink)">arr[0:2, :]</code><br>→ Rows 0 and 1, all columns. <code>:</code> alone means "everything".</p>
+          <p><code style="color:var(--ink)">arr[:, 1:4]</code><br>→ All rows, columns 1, 2, 3 (stop=4 excluded).</p>
+          <p><code style="color:var(--ink)">arr[1, :]</code><br>→ All columns from row 1 only. Returns a 1D array (one row flattened).</p>
+        </div>
+        <div style="background:var(--code-bg);border-radius:8px;padding:12px;font-size:13px;margin-top:4px;">
+          <strong style="color:var(--accent)">⚠️ Common mistake:</strong>
+          <span style="color:var(--ink-dim)"> <code>arr[1]</code> selects all of row 1. <code>arr[1, 1]</code> selects one specific cell. Don't confuse them.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART 3: BOOLEAN MASKING ===================== -->
+  <section class="part" id="p3">
+    <div class="part-label">Part 3 — Boolean Masking</div>
+    <h2 class="headline">Filter by <em>condition</em>, not by position.</h2>
+    <p class="intro">
+      A Boolean mask is a True/False array created by a comparison like <code>arr &gt; 100</code>.
+      When you use a mask to index an array, NumPy returns only the cells where the mask is <code>True</code>.
+      This is how you answer questions like: "Which regions had sales above target?"
+    </p>
+
+    <div class="scenario">
+      <strong>Scenario:</strong> Your manager wants to flag regions where sales exceeded a threshold. Adjust the threshold to see which values are highlighted. The mask tells you exactly which cells pass the test.
+    </div>
+
+    <div class="grid-layout two">
+      <div class="panel">
+        <h3>1D View — Regional Totals</h3>
+        <div class="input-row">
+          <label>threshold: total &gt;</label>
+          <input type="number" id="p3-thresh" value="400" step="20" />
+        </div>
+        <div class="code-line" id="p3-code">mask = totals <span class="op">&gt;</span> <span class="num">400</span></div>
+        <div class="result-label">Regional totals (sum of all categories)</div>
+        <div class="array-1d cells-with-indices" id="p3-cells"></div>
+        <div class="result-label">Mask (True/False)</div>
+        <div class="result" id="p3-mask">—</div>
+        <div class="result-label">Filtered values — <code>totals[mask]</code></div>
+        <div class="result" id="p3-result">—</div>
+        <div class="legend">
+          <span><span class="swatch" style="background:var(--accent-2)"></span>Condition True — included</span>
+          <span><span class="swatch" style="background:var(--panel-2);border:1px solid var(--rule)"></span>Condition False — excluded</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Combining Conditions</h3>
+        <p style="font-size:13px;color:var(--ink-dim);line-height:1.65;margin:0 0 14px">
+          You can combine two conditions with <code>&amp;</code> (AND) or <code>|</code> (OR). Each condition needs its own parentheses — without them, Python's operator precedence gives wrong results.
+        </p>
+        <div style="background:var(--code-bg);border-radius:8px;padding:14px;font:13px var(--font-mono);line-height:2.2;">
+          <div><span class="kw"># AND — both must be True</span></div>
+          <div>mask = (totals <span class="op">&gt;</span> <span class="num">400</span>) <span class="op">&amp;</span> (totals <span class="op">&lt;</span> <span class="num">600</span>)</div>
+          <br>
+          <div><span class="kw"># OR — either can be True</span></div>
+          <div>mask = (totals <span class="op">&lt;</span> <span class="num">300</span>) <span class="op">|</span> (totals <span class="op">&gt;</span> <span class="num">600</span>)</div>
+          <br>
+          <div><span class="kw"># NOT — flip True to False</span></div>
+          <div>mask = <span class="op">~</span>(totals <span class="op">&gt;</span> <span class="num">400</span>)</div>
+        </div>
+        <div style="background:var(--code-bg);border-radius:8px;padding:12px;font-size:13px;margin-top:12px;border-left:3px solid var(--accent-2);">
+          <strong style="color:var(--ink);">Important:</strong>
+          <span style="color:var(--ink-dim)"> A boolean mask must have the same length as the dimension you are indexing. Trying to apply a mask of length 3 to an array of length 5 will raise an error.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART 4: VIEWS vs COPIES ===================== -->
+  <section class="part" id="p4">
+    <div class="part-label">Part 4 — Views vs Copies</div>
+    <h2 class="headline">A slice is a <em>window</em>, not a photograph.</h2>
+    <p class="intro">
+      When you slice a NumPy array, you get a <strong>view</strong> — a window into the same memory as the original.
+      Changing the view changes the original. If you need an independent copy, you must call <code>.copy()</code> explicitly.
+      This is one of the most common sources of accidental data corruption in NumPy.
+    </p>
+
+    <div class="scenario">
+      <strong>Scenario:</strong> You slice a sub-array from your sales data to edit the figures for Region 1. Toggle between View and Copy mode, apply a change, and watch what happens to the original.
+    </div>
+
+    <div class="panel">
+      <h3>Mode — choose how the slice is created</h3>
+      <div class="vc-toggle">
+        <button id="vc-view-btn" class="active-view">🔗 View &nbsp; <code>child = arr[1:3]</code></button>
+        <button id="vc-copy-btn">📸 Copy &nbsp; <code>child = arr[1:3].copy()</code></button>
+      </div>
+      <div class="code-line" id="p4-code">child = arr[<span class="num">1</span>:<span class="num">3</span>]</div>
+
+      <div class="input-row" style="margin-bottom:14px;">
+        <label>Set child[0] to:</label>
+        <input type="number" id="p4-newval" value="999" style="width:80px" />
+        <button class="apply-btn" id="p4-apply">Apply Change</button>
+        <button class="reset-btn" id="p4-reset">Reset</button>
+      </div>
+
+      <div class="side-by-side">
+        <div class="mini-panel">
+          <h4 id="p4-parent-title" style="color:var(--ink);">parent — original array</h4>
+          <div class="array-1d cells-with-indices" id="p4-parent"></div>
+        </div>
+        <div class="mini-panel">
+          <h4 id="p4-child-title">child — the slice</h4>
+          <div class="array-1d cells-with-indices" id="p4-child"></div>
+        </div>
+      </div>
+
+      <div class="explain-box" id="p4-explain">
+        Choose a mode above, then apply a change to see what happens.
+      </div>
+
+      <div class="legend" style="margin-top:14px;">
+        <span><span class="swatch" style="background:var(--accent-4)"></span>View — shares memory with parent</span>
+        <span><span class="swatch" style="background:var(--accent-3)"></span>Copy — independent from parent</span>
+        <span><span class="swatch" style="background:#ff6b6b"></span>Cell changed</span>
+      </div>
+
+      <div style="background:var(--code-bg);border-radius:8px;padding:14px;font-size:13px;margin-top:18px;color:var(--ink-dim);">
+        <strong style="color:var(--accent)">Professional rule of thumb:</strong>
+        If you're going to modify a slice, always use <code style="color:var(--ink)">.copy()</code> first — unless you explicitly want changes to propagate back to the original. The safest habit is: when in doubt, copy.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    DSAI Module 1 <span class="dot">·</span> Lesson 1.6 — Introduction to NumPy <span class="dot">·</span> Visual Companion
+  </footer>
+
+</div>
+<script>
+/* ─── Tab wiring ─── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.part').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ─── makeCell helper ─── */
+function makeCell(value, idx, label, cls) {
+  const cell = document.createElement('div');
+  cell.className = 'cell' + (cls ? ' ' + cls : '');
+  if (idx !== null && idx !== undefined && idx !== '') {
+    const idxEl = document.createElement('span');
+    idxEl.className = 'idx';
+    idxEl.textContent = idx;
+    cell.appendChild(idxEl);
+  }
+  const val = document.createElement('span');
+  val.textContent = value;
+  cell.appendChild(val);
+  if (label) {
+    const lbl = document.createElement('span');
+    lbl.className = 'lbl';
+    lbl.textContent = label;
+    cell.appendChild(lbl);
+  }
+  return cell;
+}
+
+/* ─── Shared Data ─── */
+const CATEGORIES = ['Electronics', 'Food', 'Clothing', 'Sports'];
+const REGIONS    = ['R1', 'R2', 'R3', 'R4', 'R5'];
+const GRID = [
+  [120, 95, 140, 175, 160],
+  [ 80, 85,  75,  90, 100],
+  [ 50, 45,  60,  55,  70],
+  [ 30, 35,  40,  25,  45]
+];
+
+/* ══════ PART 1 ══════ */
+function buildMatrix(tableId, rows, cols, selR1, selR2, selC1, selC2) {
+  const tbl = document.getElementById(tableId);
+  tbl.innerHTML = '';
+  // Header row
+  const hdr = document.createElement('tr');
+  const corner = document.createElement('td');
+  hdr.appendChild(corner);
+  for (let j = 0; j < cols; j++) {
+    const td = document.createElement('td');
+    td.className = 'col-label';
+    td.textContent = REGIONS[j];
+    hdr.appendChild(td);
+  }
+  tbl.appendChild(hdr);
+  for (let i = 0; i < rows; i++) {
+    const tr = document.createElement('tr');
+    const lbl = document.createElement('td');
+    lbl.className = 'row-label';
+    lbl.textContent = CATEGORIES[i].slice(0,5) + '.';
+    tr.appendChild(lbl);
+    for (let j = 0; j < cols; j++) {
+      const sel = (selR1 !== undefined) ? (i >= selR1 && i < selR2 && j >= selC1 && j < selC2) : true;
+      const td = document.createElement('td');
+      const cell = makeCell(GRID[i][j], '', '', sel ? 'selected' : '');
+      cell.style.minWidth = '54px';
+      td.appendChild(cell);
+      tr.appendChild(td);
+    }
+    tbl.appendChild(tr);
+  }
+}
+
+function renderP1() {
+  const rows = Math.min(Math.max(parseInt(document.getElementById('p1-rows').value)||1, 1), 4);
+  const cols = Math.min(Math.max(parseInt(document.getElementById('p1-cols').value)||1, 1), 5);
+  document.getElementById('p1-code').innerHTML =
+    `arr = <span class="fn">np.array</span>([...])  <span style="color:var(--ink-dim)">← shape (<span style="color:var(--accent)">${rows}</span>, <span style="color:var(--accent)">${cols}</span>)</span>`;
+  buildMatrix('p1-table', rows, cols);
+  document.getElementById('p1-result').innerHTML =
+    `arr.shape = <span style="color:var(--accent)">(${rows}, ${cols})</span>   ` +
+    `arr.ndim = <span style="color:var(--accent)">${2}</span>   ` +
+    `arr.dtype = <span style="color:var(--accent)">int64</span>   ` +
+    `arr.size = <span style="color:var(--accent)">${rows * cols}</span>`;
+}
+['p1-rows','p1-cols'].forEach(id => document.getElementById(id).addEventListener('input', renderP1));
+renderP1();
+
+/* ══════ PART 2 ══════ */
+function renderP2() {
+  const r1 = parseInt(document.getElementById('p2-r1').value)||0;
+  const r2 = parseInt(document.getElementById('p2-r2').value)||0;
+  const c1 = parseInt(document.getElementById('p2-c1').value)||0;
+  const c2 = parseInt(document.getElementById('p2-c2').value)||0;
+  const rStr = (r1===0 && r2===4) ? ':' : `${r1}:${r2}`;
+  const cStr = (c1===0 && c2===5) ? ':' : `${c1}:${c2}`;
+  document.getElementById('p2-code').innerHTML =
+    `arr[<span class="num">${rStr}</span>, <span class="num">${cStr}</span>]`;
+  buildMatrix('p2-table', 4, 5, r1, r2, c1, c2);
+  const res = [];
+  for (let i = r1; i < Math.min(r2, 4); i++) {
+    const row = [];
+    for (let j = c1; j < Math.min(c2, 5); j++) row.push(GRID[i][j]);
+    if (row.length) res.push(row);
+  }
+  const rRows = res.length, rCols = rRows ? res[0].length : 0;
+  const flat = res.map(r => '[' + r.join(', ') + ']').join(',\n ');
+  document.getElementById('p2-result').innerHTML =
+    (rRows ? `[${flat}]` : '<span style="color:var(--accent-2)">empty — no rows/cols selected</span>') +
+    `<span class="dim"> shape (${rRows}, ${rCols})</span>`;
+}
+['p2-r1','p2-r2','p2-c1','p2-c2'].forEach(id =>
+  document.getElementById(id).addEventListener('input', renderP2));
+document.querySelectorAll('[data-pr1]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('p2-r1').value = btn.dataset.pr1;
+    document.getElementById('p2-r2').value = btn.dataset.pr2;
+    document.getElementById('p2-c1').value = btn.dataset.pc1;
+    document.getElementById('p2-c2').value = btn.dataset.pc2;
+    renderP2();
+  });
+});
+renderP2();
+
+/* ══════ PART 3 ══════ */
+const TOTALS = REGIONS.map((_, j) => GRID.reduce((s, row) => s + row[j], 0));
+
+function renderP3() {
+  const thresh = parseFloat(document.getElementById('p3-thresh').value) || 0;
+  document.getElementById('p3-code').innerHTML =
+    `mask = totals <span class="op">&gt;</span> <span class="num">${thresh}</span>`;
+  const cells = document.getElementById('p3-cells');
+  cells.innerHTML = '';
+  const maskVals = [], filtered = [];
+  TOTALS.forEach((v, i) => {
+    const match = v > thresh;
+    maskVals.push(match ? 'True' : 'False');
+    if (match) filtered.push(v);
+    cells.appendChild(makeCell(v, i, REGIONS[i], match ? 'cond-true' : ''));
+  });
+  document.getElementById('p3-mask').innerHTML =
+    maskVals.map(m => `<span style="color:${m==='True'?'var(--accent-2)':'var(--ink-dim)'}">${m}</span>`).join(', ');
+  document.getElementById('p3-result').innerHTML =
+    filtered.length ? `[${filtered.join(', ')}]<span class="dim"> ${filtered.length} item${filtered.length>1?'s':''}</span>` :
+    '<span style="color:var(--accent-2)">[] — no values match</span>';
+}
+document.getElementById('p3-thresh').addEventListener('input', renderP3);
+renderP3();
+
+/* ══════ PART 4 ══════ */
+const VC_ORIG = [120, 80, 50, 30, 160];
+const VC_LABELS = ['Mon','Tue','Wed','Thu','Fri'];
+let vcMode = 'view';
+let vcParent = [...VC_ORIG];
+let vcChild  = vcParent.slice(1, 3);
+let vcChanged = false;
+
+function renderP4() {
+  const parentEl = document.getElementById('p4-parent');
+  const childEl  = document.getElementById('p4-child');
+  parentEl.innerHTML = '';
+  childEl.innerHTML  = '';
+
+  vcParent.forEach((v, i) => {
+    const inSlice = i >= 1 && i < 3;
+    let cls = '';
+    if (inSlice) cls = vcMode === 'view' ? 'view-linked' : 'copy-safe';
+    if (vcChanged && inSlice && i === 1) cls = 'changed';
+    parentEl.appendChild(makeCell(v, i, VC_LABELS[i], cls));
+  });
+  vcChild.forEach((v, i) => {
+    let cls = vcMode === 'view' ? 'view-linked' : 'copy-safe';
+    if (vcChanged && i === 0) cls = 'changed';
+    childEl.appendChild(makeCell(v, i, VC_LABELS[i + 1], cls));
+  });
+
+  document.getElementById('p4-child-title').style.color =
+    vcMode === 'view' ? 'var(--accent-4)' : 'var(--accent-3)';
+  document.getElementById('p4-code').innerHTML = vcMode === 'view'
+    ? `child = arr[<span class="num">1</span>:<span class="num">3</span>]`
+    : `child = arr[<span class="num">1</span>:<span class="num">3</span>]<span class="fn">.copy()</span>`;
+
+  const explainEl = document.getElementById('p4-explain');
+  explainEl.className = 'explain-box' + (vcMode === 'copy' ? ' copy-mode' : '');
+  if (!vcChanged) {
+    explainEl.textContent = vcMode === 'view'
+      ? '🔗 View mode: child shares memory with parent. Apply a change to see what happens.'
+      : '📸 Copy mode: child is an independent copy. Apply a change — parent will not be affected.';
+  }
+}
+
+document.getElementById('p4-apply').addEventListener('click', () => {
+  const newV = parseInt(document.getElementById('p4-newval').value) || 999;
+  vcChild[0] = newV;
+  if (vcMode === 'view') vcParent[1] = newV;
+  vcChanged = true;
+  renderP4();
+  const explainEl = document.getElementById('p4-explain');
+  if (vcMode === 'view') {
+    explainEl.innerHTML = `⚠️ <strong style="color:var(--accent-4)">Shared memory!</strong> Setting child[0] to ${newV} also changed parent[1] — because the slice is a window into the same data, not a separate copy. This is why <code>.copy()</code> exists.`;
+  } else {
+    explainEl.innerHTML = `✅ <strong style="color:var(--accent-3)">Independent copy.</strong> Setting child[0] to ${newV} only changed the child — parent is untouched. The <code>.copy()</code> call created separate memory.`;
+  }
+});
+
+document.getElementById('p4-reset').addEventListener('click', () => {
+  vcParent = [...VC_ORIG];
+  vcChild  = vcMode === 'view' ? vcParent.slice(1, 3) : [...vcParent.slice(1, 3)];
+  vcChanged = false;
+  renderP4();
+});
+
+document.getElementById('vc-view-btn').addEventListener('click', () => {
+  vcMode = 'view';
+  vcParent = [...VC_ORIG];
+  vcChild  = vcParent.slice(1, 3);
+  vcChanged = false;
+  document.getElementById('vc-view-btn').className = 'active-view';
+  document.getElementById('vc-copy-btn').className = '';
+  renderP4();
+});
+document.getElementById('vc-copy-btn').addEventListener('click', () => {
+  vcMode = 'copy';
+  vcParent = [...VC_ORIG];
+  vcChild  = [...vcParent.slice(1, 3)];
+  vcChanged = false;
+  document.getElementById('vc-copy-btn').className = 'active-copy';
+  document.getElementById('vc-view-btn').className = '';
+  renderP4();
+});
+renderP4();
+</script>
+</body>
+</html>
