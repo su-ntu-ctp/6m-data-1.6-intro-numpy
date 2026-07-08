@@ -32,13 +32,9 @@ By the end of this session, you will be able to:
 
 ---
 
-## 🖥️ Visual Companion — open this first
+## 🖥️ Visual Companion
 
-> **Before working through the notebook, open the interactive visual explainer. It shows you what arrays *look like* before you start writing code.**
->
-> 📂 **[Open numpy-visual-explainer.html](../../../numpy-visual-explainer.html)** — or find it in your course folder.
->
-> The page has 4 tabs: Shape & ndarray · Indexing & Slicing · Boolean Masking · Views vs Copies. Spend 5–10 minutes clicking through each tab before opening the notebook. Everything in this lesson will make more sense with the visual in your head.
+> **Note:** this lesson includes inline ASCII diagrams throughout (look for the boxed text drawings in Parts 1–5). They show you what arrays *look like* — shapes, slices, boolean masks, and views vs copies — before you write any code. Take a moment to study each diagram as you reach it; everything in this lesson will make more sense with the picture in your head.
 
 ---
 
@@ -223,27 +219,6 @@ Key points:
 - The boolean mask must have the same length as the dimension you are indexing
 - Combine conditions with `&` (AND) and `|` (OR) — wrap each condition in parentheses
 - Assigning to a boolean-indexed slice modifies the original array in place
-
----
-
-## 🏃 Part 5: Boolean Indexing
-
-Notebook section: **"Part 5: Boolean Indexing"**
-
-Comparisons on arrays (such as `==`, `>`, `<`) are vectorized — they produce a **Boolean array** of `True`/`False` values. That Boolean array can then be used directly to filter data, selecting only the rows where the condition is `True`.
-
-```python
-names  = np.array(['Bob', 'Joe', 'Will', 'Bob', 'Will', 'Joe', 'Joe'])
-scores = np.array([[75, 80], [85, 90], [95, 100], [100, 77], [85, 92], [95, 80], [72, 80]])
-
-bob_mask = (names == 'Bob')          # array([True, False, False, True, False, False, False])
-print(scores[bob_mask])              # rows where name is 'Bob'
-```
-
-Key points:
-- The boolean mask must have the same length as the dimension you are indexing
-- Combine conditions with `&` (AND) and `|` (OR) — each condition must be wrapped in parentheses
-- Assigning to a boolean-indexed slice modifies the **original** array in place
 
 ### 🛠️ Exercise 3: Complex Filtering
 
