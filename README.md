@@ -38,7 +38,7 @@ By the end of this lesson, you will be able to:
 
 ## 🛠️ Tools & Setup
 
-- **[Google Colab](https://colab.research.google.com)** *(recommended)*: No installation, runs in-browser.
-- **[VS Code](https://code.visualstudio.com)** + Python + Jupyter extensions *(alternative)*.
+- **[VS Code](https://code.visualstudio.com)** + Python + Jupyter extensions *(recommended)*.
+- **[Google Colab](https://colab.research.google.com)** *(alternative)*: No installation, runs in-browser.
 - **Notebook:** `notebooks/numpy_lesson.ipynb` — open in Colab or VS Code with the `pds` kernel.
 - **Environment:** `conda env create -f environment.yml` then `conda activate pds` (VS Code users only).

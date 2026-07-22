@@ -6,7 +6,7 @@
 |---|---|
 | **Duration** | 3 hours |
 | **Format** | Flipped Classroom + Guided Coding in Jupyter |
-| **Tools** | Google Colab (recommended) or VS Code + `pds` conda environment |
+| **Tools** | VS Code + `pds` conda environment (recommended) or Google Colab |
 | **Notebook** | `notebooks/numpy_lesson.ipynb` |
 
 ## Agenda

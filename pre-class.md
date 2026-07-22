@@ -23,7 +23,7 @@ You'll use NumPy throughout the rest of this course as the underlying engine for
 
 ## 1\. What is a Jupyter Notebook?
 
-During the lab we will work in **Jupyter notebooks**, either in Google Colab or VS Code.
+During the lab we will work in **Jupyter notebooks**, either in VS Code or Google Colab.
 
 A Jupyter notebook is an interactive document that can contain:
 
@@ -45,52 +45,11 @@ You do **not** need to understand everything yet; just get familiar with:
 
 ---
 
-## 2\. Using Google Colab (browser option)
-
-If you plan to use **Google Colab** in the browser:
-
-### 2.1. Requirements
-
-- A Google account (Gmail or Workspace)  
-- Google Chrome browser
-
-### 2.2. Install the “Open in Colab” Chrome extension
-
-This extension lets you open GitHub-hosted notebooks in Colab with one click.
-
-1. Open the [Open in Colab Chrome extension page](https://chromewebstore.google.com/detail/open-in-colab/iogfkhleblhcpcekbiedikdehleodpjo?hl=en-US&utm_source=ext_sidebar)
-2. Click **Add to Chrome** and confirm.
-3. After installation, you should see the extension icon in your Chrome toolbar.
-
-What it does: on any GitHub notebook page, a button appears that opens the notebook directly in Colab so you can run the code immediately.
-
-### 2.3. Test Colab
-
-Before class:
-
-1. Go to [https://colab.research.google.com](https://colab.research.google.com)  
-     
-2. Click **New notebook**.  
-     
-3. In the first cell, type:
-
-```py
-import numpy as np
-np.__version__
-```
-
-4. Click **Run** (the ▶ button on the left of the cell) and confirm it runs without errors.
-
-If this works, your Colab setup is ready.
-
----
-
-
-## 3. Using VS Code (desktop option)
+## 2. Using VS Code (desktop option, recommended)
 
 If you prefer to work in **VS Code**, you can either run notebooks **locally** or connect VS Code to **Google Colab** as the execution environment.
 
-### 3.1. Install required VS Code extensions
+### 2.1. Install required VS Code extensions
 
 In VS Code:
 
@@ -102,7 +61,7 @@ In VS Code:
 
 After installation, restart VS Code if prompted.
 
-### 3.2. Test Jupyter notebooks in VS Code (local Python)
+### 2.2. Test Jupyter notebooks in VS Code (local Python)
 
 1. Open VS Code.  
      
@@ -123,7 +82,7 @@ np.__version__
 
 If this works, your local Jupyter environment in VS Code is ready.
 
-### 3.3. (Optional) Use Colab as the environment in VS Code
+### 2.3. (Optional) Use Colab as the environment in VS Code
 
 If you installed the **Colab** extension, you can run notebooks on Colab from within VS Code:
 
@@ -142,6 +101,47 @@ np.__version__
 
 If this runs successfully, you are ready to use Colab’s backend while working in the VS Code interface.
 
+---
+
+
+## 3\. Using Google Colab (browser option, alternative)
+
+If you plan to use **Google Colab** in the browser:
+
+### 3.1. Requirements
+
+- A Google account (Gmail or Workspace)  
+- Google Chrome browser
+
+### 3.2. Install the “Open in Colab” Chrome extension
+
+This extension lets you open GitHub-hosted notebooks in Colab with one click.
+
+1. Open the [Open in Colab Chrome extension page](https://chromewebstore.google.com/detail/open-in-colab/iogfkhleblhcpcekbiedikdehleodpjo?hl=en-US&utm_source=ext_sidebar)
+2. Click **Add to Chrome** and confirm.
+3. After installation, you should see the extension icon in your Chrome toolbar.
+
+What it does: on any GitHub notebook page, a button appears that opens the notebook directly in Colab so you can run the code immediately.
+
+### 3.3. Test Colab
+
+Before class:
+
+1. Go to [https://colab.research.google.com](https://colab.research.google.com)  
+     
+2. Click **New notebook**.  
+     
+3. In the first cell, type:
+
+```py
+import numpy as np
+np.__version__
+```
+
+4. Click **Run** (the ▶ button on the left of the cell) and confirm it runs without errors.
+
+If this works, your Colab setup is ready.
+
 
 ---
 
@@ -149,17 +149,17 @@ If this runs successfully, you are ready to use Colab’s backend while working 
 
 For the lab, please **choose one** environment:
 
-- **Option A – Google Colab (recommended for beginners):**  
-    
-  - Chrome \+ “Open in Colab” extension installed  
-  - You have successfully run a Colab notebook with `import numpy as np`
-
-
-- **Option B – VS Code with Jupyter:**  
+- **Option A – VS Code with Jupyter (recommended):**  
     
   - Python 3.x installed  
   - VS Code installed with Python and Jupyter extensions  
   - You have successfully run a notebook cell with `import numpy as np`
+
+
+- **Option B – Google Colab (alternative):**  
+    
+  - Chrome \+ “Open in Colab” extension installed  
+  - You have successfully run a Colab notebook with `import numpy as np`
 
 You do **not** need to install NumPy separately if you use Colab; it is already included.
 

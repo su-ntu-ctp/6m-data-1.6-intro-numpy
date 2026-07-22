@@ -5,7 +5,7 @@ This post-class practice helps you reinforce the core NumPy skills we used:
 - Aggregations over rows/columns  
 - Reshaping and simple matrix operations
 
-You can work through these in the same environment you used in class (Colab or VS Code).
+You can work through these in the same environment you used in class (VS Code or Colab).
 
 ---
 
